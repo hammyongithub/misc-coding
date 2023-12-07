@@ -2,7 +2,7 @@ import tkinter as tk
 import random
 
 root = tk.Tk()
-root.title("Gravity Simulation")
+root.title("frappy birdu")
 
 canvas = tk.Canvas(root, width=1000, height=500, bg="white")
 canvas.pack()
