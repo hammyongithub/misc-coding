@@ -7,16 +7,21 @@ root.title("frappy birdu")
 canvas = tk.Canvas(root, width=1000, height=500, bg="white")
 canvas.pack()
 
-# Game objects
-circle = canvas.create_oval(190, 50, 210, 70, fill="blue")
-coords_display = canvas.create_text(50, 10, text="")
-start_text = canvas.create_text(500, 250, text="Press 'S' to start and 'Q' to quit. Use 'Space' to jump", font=("Arial", 20), fill="black")
-
 # Game variables
 gravity = 0.1
 velocity = 0
 pipes = []
 game_active = False
+score = 0
+highscore = 0
+
+# Game objects
+circle = canvas.create_oval(190, 50, 210, 70, fill="blue")
+coords_display = canvas.create_text(50, 10, text="")
+score_display = canvas.create_text(50, 50, text="")
+highscore_display = canvas.create_text(50, 70, text="")
+start_text = canvas.create_text(500, 250, text="Press 'S' to start and 'Q' to quit. Use 'Space' to jump", font=("Arial", 20), fill="black")
+
 
 # Movement
 def jump(event):
@@ -28,8 +33,8 @@ def jump(event):
 def create_pipe():
     if game_active:
         canvas_height = canvas.winfo_height()
-        upper_pipe_height = random.randint(100, 300)
-        gap_size = 100
+        upper_pipe_height = random.randint(0, 375)
+        gap_size = 125
 
         lower_pipe_height = canvas_height - (upper_pipe_height + gap_size)
         upper_pipe = canvas.create_rectangle(1000, 0, 1050, upper_pipe_height, fill="green")
@@ -40,6 +45,7 @@ def create_pipe():
         root.after(2000, create_pipe)
 
 def move_pipes():
+    global score
     for upper_pipe, lower_pipe in pipes:
         canvas.move(upper_pipe, -5, 0)  # Adjust speed as needed
         canvas.move(lower_pipe, -5, 0)
@@ -48,6 +54,8 @@ def move_pipes():
             canvas.delete(upper_pipe)
             canvas.delete(lower_pipe)
             pipes.remove((upper_pipe, lower_pipe))
+            score = score + 1
+            canvas.itemconfigure(score_display, text=f"Score: {score}")
 
 def check_collision():
     x1, y1, x2, y2 = canvas.coords(circle)
@@ -91,7 +99,11 @@ def hide_start_text():
     canvas.itemconfigure(start_text, state='hidden')
 
 def reset_game():
-    global velocity, pipes, game_active
+    global velocity, pipes, game_active, score, highscore
+    highscore = max(highscore, score)
+    canvas.itemconfigure(highscore_display, text=f"Highscore: {highscore}")
+    score = 0
+    canvas.itemconfigure(score_display, text=f"Score: {score}")
     velocity = 0
     for pipe in pipes:
         canvas.delete(pipe[0])
