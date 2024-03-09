@@ -275,7 +275,79 @@ int TVSeriesManagement::TVSeriesInsert(TVSeries* series) {
     return 0;
 }
 
-int UserManagement::updateWatched(string filename, TVSeriesManagement& manager)
-{
-//answer 5
+// Define the updateWatched function which takes a filename and a reference to TVSeriesManagement as parameters.
+int UserManagement::updateWatched(string filename, TVSeriesManagement& manager) {
+    // Attempt to open the file using the provided filename.
+    ifstream file(filename);
+    // Check if the file is successfully opened. If not, return -1 indicating failure.
+    if (!file.is_open()) {
+        return -1;
+    }
+
+    string line;
+    // Read the file line by line.
+    while (getline(file, line)) {
+        // Use a stringstream to separate the line into series title, username, and episodes watched.
+        stringstream ss(line);
+        string seriesTitle, username;
+        int episodesWatched;
+
+        // Extract the series title, username, and episodes watched from the line. 
+        // If any part is missing, return -1 indicating a format error in the file.
+        if (getline(ss, seriesTitle, ',') &&
+            getline(ss, username, ',') &&
+            (ss >> episodesWatched)) {
+            
+            // Check if the series exists in the TV series manager.
+            bool seriesExists = false;
+            for (TVSeries* series : manager.getVectorTVSeries()) {
+                if (series->getTitle() == seriesTitle) {
+                    seriesExists = true;
+                    break;
+                }
+            }
+            // If the series does not exist, return -2 indicating the series is not found.
+            if (!seriesExists) {
+                return -2;
+            }
+
+            // Check if the user already exists in the user list.
+            bool userExists = false;
+            for (User* user : vectorUsers) {
+                if (user->getUsername() == username) {
+                    userExists = true;
+                    // If the user exists, add the watched series and episodes watched to the user's records.
+                    for (TVSeries* series : manager.getVectorTVSeries()) {
+                        if (series->getTitle() == seriesTitle) {
+                            user->addWatchedSeries(series);
+                            user->addEpisodesWatched(series, episodesWatched);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            // If the user does not exist, create a new User object and add it to the user list.
+            if (!userExists) {
+                User* newUser = new User(username, "Unknown", "Unknown", {});
+                for (TVSeries* series : manager.getVectorTVSeries()) {
+                    if (series->getTitle() == seriesTitle) {
+                        newUser->addWatchedSeries(series);
+                        newUser->addEpisodesWatched(series, episodesWatched);
+                        break;
+                    }
+                }
+                vectorUsers.push_back(newUser);
+            }
+        } else {
+            // If there's an error parsing the line, return -1 indicating a format error.
+            return -1;
+        }
+    }
+
+    // Close the file after processing all lines.
+    file.close();
+    // Return 0 indicating success.
+    return 0;
 }
