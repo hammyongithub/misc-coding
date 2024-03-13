@@ -196,12 +196,12 @@ int User::addRating(TVSeries* series, float rating) {
     ratings[index] = rating;
 
     // Return 0 indicating successful addition or update of the rating
-    return 0;
-}
-    // We could just use find(), then get the index using distance(). (Also, auto is so good, but idk if we can use it here.)
 
+    // We could just use find(), then get the index using distance(). (Also, auto is so good, but idk if we can use it here.)
     // auto it = find(watchedSeries.begin(), watchedSeries.end(), series);
     // int index = distance(watchedSeries.begin(), it);
+    return 0;
+}
 
 float TVSeries::updateRating(const vector<User*>& vectorUser) {
     // Initialize variables to keep track of total users who watched the series and sum of ratings for each season
@@ -250,7 +250,6 @@ float TVSeries::updateRating(const vector<User*>& vectorUser) {
     return rating;
 }
 
-
 int TVSeriesManagement::TVSeriesInsert(TVSeries* series) {
     // Check if the given series pointer is nullptr
     if (series == nullptr) {
@@ -275,7 +274,6 @@ int TVSeriesManagement::TVSeriesInsert(TVSeries* series) {
     return 0;
 }
 
-// Define the updateWatched function which takes a filename and a reference to TVSeriesManagement as parameters.
 int UserManagement::updateWatched(string filename, TVSeriesManagement& manager) {
     // Attempt to open the file using the provided filename.
     ifstream file(filename);
