@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <functional>
 #include <stack>
+#include <unordered_set>
 
 TVSeriesAPP::TVSeriesAPP() {
 
@@ -14,26 +15,45 @@ TVSeriesAPP::~TVSeriesAPP() {
 
 
 void TVSeriesAPP::addTitleBasics(const TitleBasics& title) {
-    
+    titles[title.tconst] = title;
 }
 
 void TVSeriesAPP::addTitleEpisodes(const TitleEpisode& episode) {
-  
+    episodes[episode.parentTconst].push_back(episode);
 }
 
 void TVSeriesAPP::addTitlePrincipal(const TitlePrincipals& principal) {
-    
+    principals[principal.tconst].push_back(principal);
 }
 
 
 
 //Pergunta 1:
 
-vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst ) const {
-    
-    
+vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst) const {
+    unordered_set<string> uniquePrincipals;  // To store unique principal names
 
-    return {};
+    // Iterate through all episodes that belong to the specified series
+    auto seriesIt = episodes.find(seriesTconst);
+    if (seriesIt != episodes.end()) {
+        for (const auto& episode : seriesIt->second) {
+            // Access all principals for each episode
+            auto episodeIt = principals.find(episode.tconst);
+            if (episodeIt != principals.end()) {
+                for (const TitlePrincipals& principal : episodeIt->second) {
+                    uniquePrincipals.insert(principal.primaryName);  // Store unique names
+                }
+            }
+        }
+    }
+
+    // Convert the set of unique names to a vector
+    vector<string> result(uniquePrincipals.begin(), uniquePrincipals.end());
+
+    // Sort the result before returning
+    sort(result.begin(), result.end());
+
+    return result;
 }
 
 //PERGUNTA 2:
