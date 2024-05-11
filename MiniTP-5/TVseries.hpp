@@ -59,23 +59,27 @@ public:
 /** @brief Class to represent a APP TVSeries Management */
 class TVSeriesAPP {
 private:
-
-    
+    unordered_map<string, TitleBasics> titles;
+    unordered_map<string, vector<TitleEpisode>> episodes;
+    unordered_map<string, vector<TitlePrincipals>> principals;
 public:
 
-
     /* --- Constructor --- */
-    TVSeriesAPP();
+    TVSeriesAPP() {}
   
-    ~TVSeriesAPP();
+    ~TVSeriesAPP() {}
     /** @brief add TtitleBasic to TVSeriesAPP */
-    void addTitleBasics(const TitleBasics& title);
-
+    void addTitleBasics(const TitleBasics& title) {
+        titles[title.tconst] = title;
+    }    
     /** @brief add TitleEpisode to TVSeriesAPP  */
-    void addTitleEpisodes(const TitleEpisode& episode);
-
+    void addTitleEpisodes(const TitleEpisode& episode) {
+        episodes[episode.parentTconst].push_back(episode);
+    }
     /** @brief add TitlePrincipals to TVSeriesAPP */
-    void addTitlePrincipal(const TitlePrincipals& principal);
+    void addTitlePrincipal(const TitlePrincipals& principal) {
+        principals[principal.tconst].push_back(principal);
+    }
     
     //PERGUNTA 1
     vector<string> getUniquePrincipals(const string& seriesTconst ) const;
