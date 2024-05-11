@@ -65,21 +65,17 @@ private:
 public:
 
     /* --- Constructor --- */
-    TVSeriesAPP() {}
+    TVSeriesAPP();
   
-    ~TVSeriesAPP() {}
+    ~TVSeriesAPP();
     /** @brief add TtitleBasic to TVSeriesAPP */
-    void addTitleBasics(const TitleBasics& title) {
-        titles[title.tconst] = title;
-    }    
+    void addTitleBasics(const TitleBasics& title);
+
     /** @brief add TitleEpisode to TVSeriesAPP  */
-    void addTitleEpisodes(const TitleEpisode& episode) {
-        episodes[episode.parentTconst].push_back(episode);
-    }
+    void addTitleEpisodes(const TitleEpisode& episode);
+
     /** @brief add TitlePrincipals to TVSeriesAPP */
-    void addTitlePrincipal(const TitlePrincipals& principal) {
-        principals[principal.tconst].push_back(principal);
-    }
+    void addTitlePrincipal(const TitlePrincipals& principal);
     
     //PERGUNTA 1
     vector<string> getUniquePrincipals(const string& seriesTconst ) const;

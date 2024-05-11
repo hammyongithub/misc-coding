@@ -15,14 +15,13 @@ TVSeriesAPP::~TVSeriesAPP() {
 
 void TVSeriesAPP::addTitleBasics(const TitleBasics& title) {
     
- }
+}
+
 void TVSeriesAPP::addTitleEpisodes(const TitleEpisode& episode) {
   
 }
 
-
 void TVSeriesAPP::addTitlePrincipal(const TitlePrincipals& principal) {
-
     
 }
 
