@@ -4,6 +4,7 @@
 #include <functional>
 #include <stack>
 #include <unordered_set>
+#include <unordered_map>
 
 TVSeriesAPP::TVSeriesAPP() {
 
@@ -59,11 +60,30 @@ vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst) cons
 //PERGUNTA 2:
 
 
-
 string TVSeriesAPP::getMostSeriesGenre() const {
-   
+    unordered_map<string, int> genreCount;
 
-    return "";
+    // Iterate through all TitleBasics objects in the titles map
+    for (const auto& pair : titles) {
+        const TitleBasics& series = pair.second; // Get the TitleBasics object
+        for (const auto& genre : series.genres) {
+            genreCount[genre]++;
+        }
+    }
+
+    string mostPopularGenre;
+    int maxCount = 0;
+
+    // Find the genre with the maximum count
+    for (const auto& entry : genreCount) {
+        if (entry.second > maxCount || 
+            (entry.second == maxCount && entry.first.size() < mostPopularGenre.size())) {
+            mostPopularGenre = entry.first;
+            maxCount = entry.second;
+        }
+    }
+
+    return mostPopularGenre;
 }
 
 
