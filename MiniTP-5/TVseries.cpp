@@ -89,11 +89,46 @@ string TVSeriesAPP::getMostSeriesGenre() const {
 
 //PERGUNTA 3: 
 
+
+#include "TVseries.hpp"
+#include <unordered_map>
+#include <algorithm>
+
+// Function to get the principal who has played a character the most times
 string TVSeriesAPP::getPrincipalFromCharacter(const string& character) const {
+    unordered_map<string, int> characterCount; // Map to store count of characters played by each principal
+    unordered_map<string, string> principalNames; // Map to store nconst to primaryName mapping
 
-    return "";
+    // Iterate through all principals to count character appearances
+    for (const auto& entry : principals) {
+        for (const auto& principal : entry.second) {
+            for (const auto& charName : principal.characters) {
+                if (charName.find(character) != string::npos) {
+                    characterCount[principal.nconst]++;
+                    principalNames[principal.nconst] = principal.primaryName;
+                }
+            }
+        }
+    }
+
+    // Variables to store the principal with the most appearances of the character
+    int maxCount = 0;
+    string principalWithMostAppearances;
+
+    // Find the principal with the maximum count, resolving ties by alphabetical order
+    for (const auto& entry : characterCount) {
+        const string& nconst = entry.first;
+        int count = entry.second;
+        const string& primaryName = principalNames[nconst];
+
+        if (count > maxCount || (count == maxCount && primaryName < principalWithMostAppearances)) {
+            maxCount = count;
+            principalWithMostAppearances = primaryName;
+        }
+    }
+
+    return principalWithMostAppearances;
 }
-
 
 
 //PERGUNTA 4
