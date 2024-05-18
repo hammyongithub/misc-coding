@@ -129,15 +129,56 @@ string TVSeriesAPP::getPrincipalFromCharacter(const string& character) const {
 
 vector<string> TVSeriesAPP::principalsWithMultipleCategories(const string& seriesTconst ) const {
 
-  return {};
+    return {};
 }
- 
+
 //PERGUNTA 5:
 
 int TVSeriesAPP::principalInMultipleGenres(vector<string> vGenres) {
+    unordered_set<string> genresSet(vGenres.begin(), vGenres.end());
+    unordered_map<string, unordered_set<string>> principalToGenres;
 
+    // Iterate over all series and their genres
+    for (const auto& seriesPair : titles) {
+        const TitleBasics& series = seriesPair.second;
+        unordered_set<string> seriesGenres(series.genres.begin(), series.genres.end());
+        bool matches = false;
+        for (const auto& genre : seriesGenres) {
+            if (genresSet.find(genre) != genresSet.end()) {
+                matches = true;
+                break;
+            }
+        }
 
-return -1;
+        // If the series matches the genres, collect its principals
+        if (matches) {
+            auto episodeIt = episodes.find(series.tconst);
+            if (episodeIt != episodes.end()) {
+                for (const auto& episode : episodeIt->second) {
+                    auto principalIt = principals.find(episode.tconst);
+                    if (principalIt != principals.end()) {
+                        for (const auto& principal : principalIt->second) {
+                            for (const auto& genre : seriesGenres) {
+                                if (genresSet.find(genre) != genresSet.end()) {
+                                    principalToGenres[principal.nconst].insert(genre);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Count principals who are in multiple genres
+    int count = 0;
+    for (const auto& entry : principalToGenres) {
+        if (entry.second.size() > 1) {
+            count++;
+        }
+    }
+
+    return count;
 }
 
 
