@@ -89,12 +89,6 @@ string TVSeriesAPP::getMostSeriesGenre() const {
 
 //PERGUNTA 3: 
 
-
-#include "TVseries.hpp"
-#include <unordered_map>
-#include <algorithm>
-
-// Function to get the principal who has played a character the most times
 string TVSeriesAPP::getPrincipalFromCharacter(const string& character) const {
     unordered_map<string, int> characterCount; // Map to store count of characters played by each principal
     unordered_map<string, string> principalNames; // Map to store nconst to primaryName mapping
