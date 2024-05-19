@@ -59,7 +59,6 @@ vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst) cons
 
     return result;
 }
-
 //PERGUNTA 2:
 
 
@@ -136,10 +135,53 @@ string TVSeriesAPP::getPrincipalFromCharacter(const string& character) const {
 
 //PERGUNTA 4
 
-vector<string> TVSeriesAPP::principalsWithMultipleCategories(const string& seriesTconst ) const {
+vector<string> TVSeriesAPP::principalsWithMultipleCategories(const string& seriesTconst) const {
+    // Set to store all episode tconsts of the given series
+    unordered_set<string> episodeSet;
+    // Map to store each principal's categories
+    unordered_map<string, unordered_set<string>> principalCategories;
 
-    return {};
+    // Find all episodes of the given series
+    auto seriesIt = episodes.find(seriesTconst);
+    if (seriesIt != episodes.end()) {
+        for (const auto& episode : seriesIt->second) {
+            episodeSet.insert(episode.tconst);
+        }
+    }
+
+    // Find all principals in those episodes
+    for (const auto& ep : episodeSet) {
+        auto principalIt = principals.find(ep);
+        if (principalIt != principals.end()) {
+            for (const auto& principal : principalIt->second) {
+                principalCategories[principal.nconst].insert(principal.category);
+            }
+        }
+    }
+
+    // Collect principals with multiple categories
+    unordered_set<string> uniqueNames;
+    for (const auto& entry : principalCategories) {
+        if (entry.second.size() > 1) {
+            // Find the principal's name
+            for (const auto& principalEntry : principals) {
+                for (const auto& principal : principalEntry.second) {
+                    if (principal.nconst == entry.first) {
+                        uniqueNames.insert(principal.primaryName);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Convert the set to a vector and sort it alphabetically
+    vector<string> result(uniqueNames.begin(), uniqueNames.end());
+    sort(result.begin(), result.end());
+
+    return result;
 }
+
 
 //PERGUNTA 5:
 
@@ -202,13 +244,38 @@ int TVSeriesAPP::principalInMultipleGenres(vector<string> vGenres) {
 
 
 //PERGUNTA 6: 
+
 vector<string> TVSeriesAPP::principalsInAllEpisodes(const string& seriesTconst) const {
 
-    return {};
+    std::vector<std::string> result;
+    std::unordered_map<std::string, int> principalCount;
+
+    auto episodeIt = episodes.find(seriesTconst);
+    if (episodeIt != episodes.end()) {
+        for (const auto& episode : episodeIt->second) {
+            auto principalIt = principals.find(episode.tconst);
+            if (principalIt != principals.end()) {
+                for (const auto& principal : principalIt->second) {
+                    principalCount[principal.primaryName]++;
+                }
+            }
+        }
+
+        for (const auto& entry : principalCount) {
+            if (entry.second == episodeIt->second.size()) {
+                result.push_back(entry.first);
+            }
+        }
+
+        std::sort(result.begin(), result.end());
+    }
+
+    return result;
 }
 
 
-
+//We convert the input vectors on the exercises into unordered sets for faster lookup times.
+//Also provides better efficiency and scalability for the 1000 tests.
 
 
 
