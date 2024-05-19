@@ -243,32 +243,47 @@ int TVSeriesAPP::principalInMultipleGenres(vector<string> vGenres) {
 }
 
 
-//PERGUNTA 6: 
-
 vector<string> TVSeriesAPP::principalsInAllEpisodes(const string& seriesTconst) const {
-
-    std::vector<std::string> result;
-    std::unordered_map<std::string, int> principalCount;
-
-    auto episodeIt = episodes.find(seriesTconst);
-    if (episodeIt != episodes.end()) {
-        for (const auto& episode : episodeIt->second) {
-            auto principalIt = principals.find(episode.tconst);
-            if (principalIt != principals.end()) {
-                for (const auto& principal : principalIt->second) {
-                    principalCount[principal.primaryName]++;
-                }
-            }
-        }
-
-        for (const auto& entry : principalCount) {
-            if (entry.second == episodeIt->second.size()) {
-                result.push_back(entry.first);
-            }
-        }
-
-        std::sort(result.begin(), result.end());
+    // Find all episodes of the series
+    auto it = episodes.find(seriesTconst);
+    if (it == episodes.end()) {
+        return {}; // No episodes found for the series
     }
+
+    const vector<TitleEpisode>& episodeList = it->second;
+    unordered_set<string> episodeTconsts;
+    for (const auto& episode : episodeList) {
+        episodeTconsts.insert(episode.tconst);
+    }
+
+    // If there are no episodes found, return an empty vector
+    if (episodeTconsts.empty()) {
+        return {};
+    }
+
+    // Track the principals in each episode
+    unordered_map<string, unordered_set<string>> principalEpisodes;
+
+    for (const auto& epTconst : episodeTconsts) {
+        auto itP = principals.find(epTconst);
+        if (itP != principals.end()) {
+            const vector<TitlePrincipals>& principalList = itP->second;
+            for (const auto& principal : principalList) {
+                principalEpisodes[principal.primaryName].insert(epTconst);
+            }
+        }
+    }
+
+    // Find principals that appear in all episodes
+    vector<string> result;
+    for (const auto& entry : principalEpisodes) {
+        if (entry.second.size() == episodeTconsts.size()) {
+            result.push_back(entry.first);
+        }
+    }
+
+    // Sort the result alphabetically
+    sort(result.begin(), result.end());
 
     return result;
 }
