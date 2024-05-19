@@ -751,7 +751,6 @@ int main() {
     
 
 //inicio do comentário
-/*
     cout << "Base de dados grande \n" << endl;
 
     TVSeriesAPP tvSeriesApp;
@@ -853,7 +852,7 @@ int main() {
     end = clock();
 time = (double)(end - beg) / CLOCKS_PER_SEC;
 cout << "Tempo para responder às 6 questões: "<< time << endl;
-*/
+
 // fim do comentário
 
 if (errorCount == 0)
