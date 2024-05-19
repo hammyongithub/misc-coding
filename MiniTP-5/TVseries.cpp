@@ -32,17 +32,20 @@ void TVSeriesAPP::addTitlePrincipal(const TitlePrincipals& principal) {
 //Pergunta 1:
 
 vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst) const {
-    unordered_set<string> uniquePrincipals;  // To store unique principal names
+    // To store unique principal names
+    unordered_set<string> uniquePrincipals;
 
-    // Iterate through all episodes that belong to the specified series
+    // Find episodes that belong to the specified series
     auto seriesIt = episodes.find(seriesTconst);
     if (seriesIt != episodes.end()) {
+        // Iterate through each episode of the series
         for (const auto& episode : seriesIt->second) {
-            // Access all principals for each episode
+            // Find principals for each episode
             auto episodeIt = principals.find(episode.tconst);
             if (episodeIt != principals.end()) {
+                // Insert principal names into the set to ensure uniqueness
                 for (const TitlePrincipals& principal : episodeIt->second) {
-                    uniquePrincipals.insert(principal.primaryName);  // Store unique names
+                    uniquePrincipals.insert(principal.primaryName);
                 }
             }
         }
@@ -51,7 +54,7 @@ vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst) cons
     // Convert the set of unique names to a vector
     vector<string> result(uniquePrincipals.begin(), uniquePrincipals.end());
 
-    // Sort the result before returning
+    // Sort the result alphabetically before returning
     sort(result.begin(), result.end());
 
     return result;
@@ -61,42 +64,24 @@ vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst) cons
 
 
 string TVSeriesAPP::getMostSeriesGenre() const {
-    unordered_map<string, int> genreCount;
 
-    // Iterate through all TitleBasics objects in the titles map
-    for (const auto& pair : titles) {
-        const TitleBasics& series = pair.second; // Get the TitleBasics object
-        for (const auto& genre : series.genres) {
-            genreCount[genre]++;
-        }
-    }
-
-    string mostPopularGenre;
-    int maxCount = 0;
-
-    // Find the genre with the maximum count
-    for (const auto& entry : genreCount) {
-        if (entry.second > maxCount || 
-            (entry.second == maxCount && entry.first.size() < mostPopularGenre.size())) {
-            mostPopularGenre = entry.first;
-            maxCount = entry.second;
-        }
-    }
-
-    return mostPopularGenre;
+    return {};
 }
 
 
 //PERGUNTA 3: 
 
 string TVSeriesAPP::getPrincipalFromCharacter(const string& character) const {
-    unordered_map<string, int> characterCount; // Map to store count of characters played by each principal
-    unordered_map<string, string> principalNames; // Map to store nconst to primaryName mapping
+    // Map to store count of characters played by each principal
+    unordered_map<string, int> characterCount;
+    // Map to store nconst to primaryName mapping
+    unordered_map<string, string> principalNames;
 
     // Iterate through all principals to count character appearances
     for (const auto& entry : principals) {
         for (const auto& principal : entry.second) {
             for (const auto& charName : principal.characters) {
+                // Check if the character is part of the principal's character names
                 if (charName.find(character) != string::npos) {
                     characterCount[principal.nconst]++;
                     principalNames[principal.nconst] = principal.primaryName;
@@ -115,6 +100,7 @@ string TVSeriesAPP::getPrincipalFromCharacter(const string& character) const {
         int count = entry.second;
         const string& primaryName = principalNames[nconst];
 
+        // Update the principal with the most appearances based on count and alphabetical order
         if (count > maxCount || (count == maxCount && primaryName < principalWithMostAppearances)) {
             maxCount = count;
             principalWithMostAppearances = primaryName;
@@ -123,6 +109,7 @@ string TVSeriesAPP::getPrincipalFromCharacter(const string& character) const {
 
     return principalWithMostAppearances;
 }
+
 
 
 //PERGUNTA 4
@@ -135,13 +122,20 @@ vector<string> TVSeriesAPP::principalsWithMultipleCategories(const string& serie
 //PERGUNTA 5:
 
 int TVSeriesAPP::principalInMultipleGenres(vector<string> vGenres) {
+    // Convert the input genres vector to an unordered set for fast lookup
     unordered_set<string> genresSet(vGenres.begin(), vGenres.end());
+    
+    // Map to store each principal and the set of genres they are associated with
     unordered_map<string, unordered_set<string>> principalToGenres;
 
-    // Iterate over all series and their genres
+    // Iterate through all the series in the titles map
     for (const auto& seriesPair : titles) {
         const TitleBasics& series = seriesPair.second;
+        
+        // Convert series genres to an unordered set for fast lookup
         unordered_set<string> seriesGenres(series.genres.begin(), series.genres.end());
+        
+        // Check if the series matches any of the desired genres
         bool matches = false;
         for (const auto& genre : seriesGenres) {
             if (genresSet.find(genre) != genresSet.end()) {
@@ -150,14 +144,17 @@ int TVSeriesAPP::principalInMultipleGenres(vector<string> vGenres) {
             }
         }
 
-        // If the series matches the genres, collect its principals
+        // If the series matches the genres
         if (matches) {
+            // Find episodes associated with this series
             auto episodeIt = episodes.find(series.tconst);
             if (episodeIt != episodes.end()) {
                 for (const auto& episode : episodeIt->second) {
+                    // Find principals associated with this episode
                     auto principalIt = principals.find(episode.tconst);
                     if (principalIt != principals.end()) {
                         for (const auto& principal : principalIt->second) {
+                            // For each principal, add the matching genres to their set
                             for (const auto& genre : seriesGenres) {
                                 if (genresSet.find(genre) != genresSet.end()) {
                                     principalToGenres[principal.nconst].insert(genre);
@@ -170,7 +167,7 @@ int TVSeriesAPP::principalInMultipleGenres(vector<string> vGenres) {
         }
     }
 
-    // Count principals who are in multiple genres
+    // Count the number of principals associated with more than one genre
     int count = 0;
     for (const auto& entry : principalToGenres) {
         if (entry.second.size() > 1) {
