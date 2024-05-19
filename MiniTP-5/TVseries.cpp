@@ -64,8 +64,30 @@ vector<string> TVSeriesAPP::getUniquePrincipals(const string& seriesTconst) cons
 
 
 string TVSeriesAPP::getMostSeriesGenre() const {
+    unordered_map<string, int> genreFrequency;
 
-    return {};
+    for (const auto& pair : titles) {
+        const TitleBasics& title = pair.second;
+        for (const string& genre : title.genres) {
+            genreFrequency[genre]++;
+        }
+    }
+
+    
+    string mostFrequentGenre;
+    int highestFrequency = 0;
+
+    for (const auto& pair : genreFrequency) {
+        const std::string& genre = pair.first;
+        int frequency = pair.second;
+
+        if (frequency > highestFrequency || (frequency == highestFrequency && genre.length() < mostFrequentGenre.length())) {
+            mostFrequentGenre = genre;
+            highestFrequency = frequency;
+        }
+    }
+
+    return mostFrequentGenre;
 }
 
 
