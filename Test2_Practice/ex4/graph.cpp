@@ -55,7 +55,26 @@ void Graph::print()
 
 queue<int> Graph::BFS(int s)
 {
-   /* Implementar 4a) */
+    queue<int> toVisit;
+    vector<bool> visited(this->v, false);
+    queue<int> visitOrder;
+
+    toVisit.push(s);
+    visited[s] = true;
+
+    while(!toVisit.empty()) {
+        int current = toVisit.front();
+        toVisit.pop();
+        visitOrder.push(current);
+
+            for(int neighbour : adj[current]) {
+                if(!visited[neighbour]) {
+                    toVisit.push(neighbour);
+                    visited[neighbour] = true;
+                }
+            }
+        }
+    return visitOrder;
 }
 
 
