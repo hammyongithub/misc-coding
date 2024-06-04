@@ -91,11 +91,47 @@ int Tree::getLevel(Node *search_node, Node *tree_node, int level)
 
 uint Tree::prodReplace(Node *tree_node)
 {
-    /* Implementar 1a) */
+    if (tree_node == NULL)
+        return 1;
+    
+    unsigned int leftProduct = prodReplace(tree_node->left);
+    unsigned int rightProduct = prodReplace(tree_node->right);
+
+    unsigned int originalValue = tree_node->data;
+    
+    tree_node->data = leftProduct * rightProduct;
+    
+    return tree_node->data * originalValue;
+    
 }
 
 void Tree::printSibling(Node *search_node, Node *tree_node)
 {
-    /* Implementar 1b) */
-}
+    if (tree_node == nullptr || search_node == nullptr) {
+        return;
+    }
 
+    if (tree_node->left == search_node) {
+        if (tree_node->right != nullptr)
+            cout << tree_node->right->data << endl;
+        else
+            cout << endl;
+        return;
+    } else if (tree_node->right == search_node) {
+        if (tree_node->left != nullptr)
+            cout << tree_node->left->data << endl;
+        else
+            cout << endl;
+        return;
+    }
+
+    // Percorre a árvore
+    if (tree_node->left != nullptr)
+        printSibling(search_node, tree_node->left);
+    if (tree_node->right != nullptr)
+        printSibling(search_node, tree_node->right);
+        
+    // All this does is run the tree down checking siblings of current tree node
+    // Then after it checks, it goes down to said siblings and goes down once more to their children.
+
+}
