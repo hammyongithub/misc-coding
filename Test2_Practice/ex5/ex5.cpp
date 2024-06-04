@@ -19,7 +19,20 @@ void testReverseLastElements(int value, list<int> *list_orig, list<int> *list_re
  */
 int swapHeadAndTail(list<int> *list_name)
 {
-   
+    if (list_name->empty()) {
+        return -1;
+    }
+    if (list_name->size() == 1) {
+        // No need to swap if there's only one element
+        return 0;
+    }
+    int head = list_name->front();
+    int tail = list_name->back();
+    list_name->pop_front();
+    list_name->pop_back();
+    list_name->push_back(head);
+    list_name->push_front(tail);
+    
     return 0;
 }
 
@@ -30,10 +43,19 @@ int swapHeadAndTail(list<int> *list_name)
  *  @return -1 em caso de erro || 0 em caso de sucesso
  *  @note   k deve ser um número não negativo
  */
-int reverseLastElements(list<int> *list_name, int k)
-{
-     return 0;
+int reverseLastElements(list<int> *list_name, int k) {
+  if (list_name->empty() || k <= 0 || k > int(list_name->size())) {
+    return -1;
+  }
+  auto it = list_name->end();
+  advance(it, -k);
+  list<int> ksection;
+  ksection.splice(ksection.begin(), *list_name, it, list_name->end()); // Remove k elements, splice handles memory
+  ksection.reverse();
+  list_name->splice(list_name->end(), ksection);
+  return 0;
 }
+
 
 /* ----------------------------- */
 /* -------- NÃO ALTERAR -------- */

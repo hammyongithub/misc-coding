@@ -3,9 +3,32 @@
 #include <vector>
 using namespace std;
  
-int removeElements(stack<string> &s, vector<string> v)
-{
-  
+int removeElements(std::stack<std::string>& s, std::vector<std::string>& v) {
+    if (s.empty() || v.empty()) {
+        return -1;
+    }
+
+    stack<string> temp;
+
+    while (!s.empty()) {
+        bool found = false;
+        for (int i = 0; i < (int)v.size(); ++i) {
+            if (s.top() == v[i]) {
+                s.pop();
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            temp.push(s.top());
+        }
+        s.pop();
+    }
+    for (int i = temp.size() - 1; i >= 0; --i) {
+        s.push(temp.top());
+        temp.pop();
+    }
+
     return 0;
 }
 
