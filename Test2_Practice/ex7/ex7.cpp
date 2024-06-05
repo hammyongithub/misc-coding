@@ -14,7 +14,19 @@ void printListfloat(list<float> list_name);
 
 int removeElements(list<int> *list1, int n)
 {
-    
+    if(list1->empty()) {
+        return -1;
+    }
+    //remove numbers bigger than n from list
+    auto it = list1->begin();
+    while(it != list1->end()) {
+        if(*it > n) {
+            it = list1->erase(it);
+        } else {
+            it++;
+        }
+    }
+    return 0;
 }
 
 
